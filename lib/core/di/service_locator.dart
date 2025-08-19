@@ -1,4 +1,5 @@
 // lib/core/di/service_locator.dart
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'service_locator.config.dart';
@@ -11,5 +12,12 @@ final getIt = GetIt.instance;
   asExtension: false, //отключаем генерацию метода как extension-метода для GetIt
 )
 
-void configureDependencies() => init(getIt); // Это функция-обёртка, которая служит 
+void configureDependencies() {
+  // Ручная регистрация Dio
+  getIt.registerSingleton<Dio>(Dio());
+  // Автоматическая регистрация остальных зависимостей
+  init(getIt);
+} 
+
+// Это функция-обёртка, которая служит 
 // единой точкой входа для инициализации DI и позволяет добавить дополнительную логику

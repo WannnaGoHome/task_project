@@ -1,17 +1,21 @@
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:practise/core/di/service_locator.dart';
 import 'package:practise/data/repositories/number_repository.dart';
 import 'num_model.dart';
 import 'num_screen.dart';
+import 'package:injectable/injectable.dart';
 
 
+@injectable
 class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
 {
-  final numberController = TextEditingController();
-  final factText = StateNotifier<String>(initValue: 'Здесь будет ваш факт');
-  final numberRepository = NumberRepository();
-  
+  final TextEditingController numberController;
+  final StateNotifier<String> factText;
+  final NumberRepository numberRepository;
+
+
     //TODO изучить flavor окружения 
 
     //Dev-версия — для разработчиков и тестировщиков. Прод-версия — для обычных пользователей.
@@ -19,10 +23,6 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
     //а данные прод-версии остаются чистыми. Так мы получаем точную 
     //картину того, насколько фича востребована у реальных пользователей. 
     
-    // Android	               iOS
-    // build types	           build configurations
-    // flavors	               targets
-
     // Build types / build configurations — отвечают за то, как собирается приложение (например, debug, release).
     // debug — сборка для разработки: можно дебажить, есть дополнительные логи, нет жёстких оптимизаций, 
     // подписывается debug-ключом.
@@ -41,7 +41,13 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
     // иметь отдельную иконку / название (например: Numbers DEV).
 
 
-  NumbersWidgetModel(NumbersModel model) : super(model);
+@factoryMethod
+  NumbersWidgetModel(
+    NumbersModel model, 
+    this.numberRepository,) 
+      : numberController = TextEditingController(),
+        factText = StateNotifier<String>(initValue: 'Здесь будет ваш факт'),
+        super(model);
 
   @override
   void initWidgetModel() {
@@ -88,6 +94,48 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
 }
 
 NumbersWidgetModel createNumbersWidgetModel(BuildContext context) {
-  return NumbersWidgetModel(NumbersModel());
+  return NumbersWidgetModel(
+    NumbersModel(),
+    getIt<NumberRepository>(), // Получаем из GetIt
+  );
 }
 
+
+
+// import 'package:elementary/elementary.dart';
+// import 'package:elementary_helper/elementary_helper.dart';
+// import 'package:injectable/injectable.dart';
+// import 'package:practise/data/repositories/number_repository.dart';
+
+// @injectable
+// class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel> {
+//   final TextEditingController numberController;
+//   final StateNotifier<String> factText;
+//   final NumberRepository numberRepository;
+
+//   @factoryMethod
+//   NumbersWidgetModel(
+//     NumbersModel model,
+//     this.numberRepository, // Внедряем репозиторий
+//   )   : numberController = TextEditingController(),
+//         factText = StateNotifier<String>(initValue: 'Здесь будет ваш факт'),
+//         super(model);
+
+//   // ... остальные методы без изменений ...
+// }
+
+// // Фабричная функция должна соответствовать сигнатуре WidgetModelFactory
+// NumbersWidgetModel _createNumbersWidgetModel(
+//   BuildContext context,
+//   NumberRepository repository,
+// ) {
+//   return NumbersWidgetModel(NumbersModel(), repository);
+// }
+
+// // Обёртка для совместимости с Elementary
+// WidgetModelFactory<NumbersWidgetModel> createNumbersWidgetModel = (context) {
+//   return _createNumbersWidgetModel(
+//     context,
+//     getIt<NumberRepository>(), // Получаем репозиторий из get_it
+//   );
+// };

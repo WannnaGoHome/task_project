@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:injectable/injectable.dart';
 
 // class NumberApi
 // {
@@ -14,11 +15,14 @@ import 'package:retrofit/retrofit.dart';
   
 // }
 
-part 'number_api.g.dart'; // будет сгенерирован
+part 'number_api.g.dart';
 
+@singleton
 @RestApi(baseUrl: "http://numbersapi.com/")
 abstract class NumberApi {
-  factory NumberApi(Dio dio, {String baseUrl}) = _NumberApi;
+
+  @factoryMethod
+  factory NumberApi(Dio dio) = _NumberApi;
 
   @GET("/{number}/math")
   Future<String> getMathFact(@Path("number") int number);

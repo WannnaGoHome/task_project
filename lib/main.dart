@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:practise/data/router/task_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:practise/data/repositories/user_repository.dart';
-
+import 'package:practise/core/di/service_locator.dart';
 
 void main() async {
   final userRepository = UserRepository();
   
   WidgetsFlutterBinding.ensureInitialized();
   await userRepository.initializeUsers();
+  configureDependencies();
   runApp(
       MyApp(),
   );
