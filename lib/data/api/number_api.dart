@@ -16,7 +16,7 @@ import 'package:injectable/injectable.dart';
 
 part 'number_api.g.dart';
 
-@singleton
+@lazySingleton
 @RestApi(baseUrl: "http://numbersapi.com/")
 abstract class NumberApi {
 
@@ -28,7 +28,7 @@ abstract class NumberApi {
 
   @GET("/random/trivia")
   Future<String> getRandomTrivia();
-  //TODO изучить работа с API dio, retrofit
+  
 }
 
 // Retrofit — это как умная обёртка над Dio, которая позволяет 

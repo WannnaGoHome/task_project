@@ -18,9 +18,7 @@ void configureDependencies() {
   init(getIt);
 } 
 
-
 //Без Injectable было бы так:
-
 //void configureDependencies() {
 //   // 1. Dio (для работы с сетью)
 //   getIt.registerSingleton<Dio>(Dio());
@@ -51,12 +49,6 @@ void configureDependencies() {
 // Виджеты	        Зависимости через конструкторы	      Доступ через WidgetModel
 // Время жизни	    Контролируется вручную	              Чёткие правила (singleton/factory)
 // Гибкость	        Требует рефакторинга для изменений	  Можно менять реализации в runtime
-
-
-
-
-
-
 
 
   //TODO Dependency Injection 
