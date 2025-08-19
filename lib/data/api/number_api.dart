@@ -12,7 +12,6 @@ import 'package:injectable/injectable.dart';
 //     final response = await _dioClient.get(url);
 //     return response;
 //   }
-  
 // }
 
 part 'number_api.g.dart';
@@ -21,7 +20,7 @@ part 'number_api.g.dart';
 @RestApi(baseUrl: "http://numbersapi.com/")
 abstract class NumberApi {
 
-  @factoryMethod
+  @factoryMethod //фабрика для создания экземпляра
   factory NumberApi(Dio dio) = _NumberApi;
 
   @GET("/{number}/math")

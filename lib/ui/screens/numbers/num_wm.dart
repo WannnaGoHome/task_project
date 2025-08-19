@@ -15,7 +15,6 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   final StateNotifier<String> factText;
   final NumberRepository numberRepository;
 
-
     //TODO изучить flavor окружения 
 
     //Dev-версия — для разработчиков и тестировщиков. Прод-версия — для обычных пользователей.
@@ -41,7 +40,7 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
     // иметь отдельную иконку / название (например: Numbers DEV).
 
 
-@factoryMethod
+  @factoryMethod
   NumbersWidgetModel(
     NumbersModel model, 
     this.numberRepository,) 
@@ -96,46 +95,6 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
 NumbersWidgetModel createNumbersWidgetModel(BuildContext context) {
   return NumbersWidgetModel(
     NumbersModel(),
-    getIt<NumberRepository>(), // Получаем из GetIt
+    getIt<NumberRepository>(),
   );
 }
-
-
-
-// import 'package:elementary/elementary.dart';
-// import 'package:elementary_helper/elementary_helper.dart';
-// import 'package:injectable/injectable.dart';
-// import 'package:practise/data/repositories/number_repository.dart';
-
-// @injectable
-// class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel> {
-//   final TextEditingController numberController;
-//   final StateNotifier<String> factText;
-//   final NumberRepository numberRepository;
-
-//   @factoryMethod
-//   NumbersWidgetModel(
-//     NumbersModel model,
-//     this.numberRepository, // Внедряем репозиторий
-//   )   : numberController = TextEditingController(),
-//         factText = StateNotifier<String>(initValue: 'Здесь будет ваш факт'),
-//         super(model);
-
-//   // ... остальные методы без изменений ...
-// }
-
-// // Фабричная функция должна соответствовать сигнатуре WidgetModelFactory
-// NumbersWidgetModel _createNumbersWidgetModel(
-//   BuildContext context,
-//   NumberRepository repository,
-// ) {
-//   return NumbersWidgetModel(NumbersModel(), repository);
-// }
-
-// // Обёртка для совместимости с Elementary
-// WidgetModelFactory<NumbersWidgetModel> createNumbersWidgetModel = (context) {
-//   return _createNumbersWidgetModel(
-//     context,
-//     getIt<NumberRepository>(), // Получаем репозиторий из get_it
-//   );
-// };
