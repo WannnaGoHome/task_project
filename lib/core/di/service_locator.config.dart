@@ -28,7 +28,7 @@ _i174.GetIt init(
     environment,
     environmentFilter,
   );
-  gh.singleton<_i868.NumberApi>(() => _i868.NumberApi(gh<_i361.Dio>()));
+  gh.lazySingleton<_i868.NumberApi>(() => _i868.NumberApi(gh<_i361.Dio>()));
   gh.factory<_i618.NumberRepository>(
       () => _i618.NumberRepositoryImpl(gh<_i868.NumberApi>()));
   gh.factory<_i26.NumbersWidgetModel>(() => _i26.NumbersWidgetModel(

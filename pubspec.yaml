@@ -51,6 +51,8 @@ dependencies:
   retrofit: ^4.6.0
   get_it: ^8.2.0
   injectable: ^2.5.1
+  dio_smart_retry: ^7.0.1
+  flutter_local_notifications: ^19.4.0
 
 dev_dependencies:
   flutter_test:

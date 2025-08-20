@@ -137,6 +137,25 @@ class NumbersScreen extends ElementaryWidget<NumbersWidgetModel> {
                 style: GoogleFonts.montserrat(fontSize: 14.sp, fontWeight: FontWeight.w600),
               ),
             ),
+
+            SizedBox(height: 12.h),
+
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 232, 48, 109),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 14.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                elevation: 2,
+              ),
+              onPressed: () => wm.onGetErrorPressed(),
+              child: Text(
+                'Симулировать ошибку',
+                style: GoogleFonts.montserrat(fontSize: 14.sp, fontWeight: FontWeight.w600),
+              ),
+            ),
           ],
         ),
       ),

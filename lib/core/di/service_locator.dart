@@ -2,6 +2,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:practise/core/dio/dio_setup.dart';
 import 'service_locator.config.dart';
 
 final getIt = GetIt.instance;
@@ -12,9 +13,8 @@ final getIt = GetIt.instance;
   asExtension: false, //отключаем генерацию метода как extension-метода для GetIt
 )
 
-
 void configureDependencies() {
-  getIt.registerSingleton<Dio>(Dio()); //я отдельно регистрирую Дио
+  getIt.registerSingleton<Dio>(DioSetup.createDio());
   init(getIt);
 } 
 
@@ -22,17 +22,14 @@ void configureDependencies() {
 //void configureDependencies() {
 //   // 1. Dio (для работы с сетью)
 //   getIt.registerSingleton<Dio>(Dio());
-
 //   // 2. API клиент (Retrofit)
 //   getIt.registerSingleton<NumberApi>(
 //     NumberApi(getIt<Dio>()),
 //   );
-
 //   // 3. репозиторий
 //   getIt.registerSingleton<NumberRepository>(
 //     NumberRepositoryImpl(getIt<NumberApi>()),
 //   );
-
 //   // 4. Регистрируем WidgetModelFactory
 //   getIt.registerFactory<NumbersWidgetModel>(
 //     () => NumbersWidgetModel(
@@ -41,8 +38,6 @@ void configureDependencies() {
 //     ),
 //   );
 // }
-
-
 // Аспект	          Без get_it	                          С get_it
 // Регистрация	    Ручная передача зависимостей	        Автоматическая через injectable
 // Тестирование	    Сложное (переписывать конструкторы)	  Простое (подмена через registerOverride)
@@ -50,19 +45,16 @@ void configureDependencies() {
 // Время жизни	    Контролируется вручную	              Чёткие правила (singleton/factory)
 // Гибкость	        Требует рефакторинга для изменений	  Можно менять реализации в runtime
 
-
   //TODO Dependency Injection 
   //- это техника, при которой объекты получают свои 
   // зависимости извне, а не создают их самостоятельно. 
   // Это делает код более модульным и упрощает тестирование.
-
   //   Пример без DI: 
     //   final Database _db = Database(); // Зависимость создаётся внутри класса
     //   void getUser() {
     //     _db.query('...');
     //   }
   // Если завтра понадобится другая зависимость, то придется многое менять в классе
-
   //   Пример с DI:
     //   final Database _db;
     //   UserService(this._db); // Зависимость внедряется извне
@@ -70,16 +62,13 @@ void configureDependencies() {
     //     _db.query('...');
     //   }
   // Теперь классу можно передать любую зависимость, подходящую под требования. 
-
   // get_it -  сервис-локатор, который позволяет управлять зависимостями. Важно понимать, что get_it - 
   // это не полноценная система DI. Это как коробка для деталей LEGO. Вместо того чтобы передавать 
   // каждую деталь вручную, мы кладём их в хранилище (get_it), откуда их можно достать когда угодно. 
-  
-  // Разница DI и get_it:
+  // Разница DI и get_it
     // DI автоматически внедряет зависимости через конструктор/методы
     // Service Locator предоставляет централизованное хранилище, откуда можно 
     // запрашивать зависимости
-
   //   Как пользоваться:
     // 1. Создаём хранилище:
       // final GetItBox = GetIt.instance;

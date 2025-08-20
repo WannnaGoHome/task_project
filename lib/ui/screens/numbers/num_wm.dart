@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,7 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   final StateNotifier<String> factText;
   final NumberRepository numberRepository;
 
-    //TODO DIO Interceptor и логирование запроса и ответа
+    //TODO done DIO Interceptor и логирование запроса и ответа
     // Interceptor (перехватчик) — это как секретарь для ваших HTTP-запросов. 
     // Он стоит между вашим приложением и сервером, проверяет и изменяет все запросы и ответы.
     // Без Interceptor: Вы сами звоните в банк → говорите оператору данные → получаете ответ
@@ -23,16 +25,56 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
       // Автоматически добавляет ваш ID ко всем запросам
       // Проверяет все ответы на ошибки
       // Обновляет токены, когда они устаревают
+    // Зачем нужны Interceptors?
+      // 1. Авторизация - Request Interceptor
+      // class AuthInterceptor extends Interceptor {
+      //   @override
+      //   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+      //     options.headers['Authorization'] = 'Bearer ваш_токен_тут';
+      //     super.onRequest(options, handler);
+      //   }
+      // }
+      // 2. Логирование - Request Interceptor, Response Interceptor
+      // class LoggingInterceptor extends Interceptor {
+      //   @override
+      //   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+      //     print('→ Запрос: ${options.method} ${options.uri}');
+      //     super.onRequest(options, handler);
+      //   }
+
+      //   @override
+      //   void onResponse(Response response, ResponseInterceptorHandler handler) {
+      //     print('← Ответ: ${response.statusCode} ${response.data}');
+      //     super.onResponse(response, handler);
+      //   }
+      // }
+      // 3. Обработка ошибок - Error Interceptor
+      // class TokenRefreshInterceptor extends Interceptor {
+      //   @override
+      //   void onError(DioException err, ErrorInterceptorHandler handler) async {
+      //     if (err.response?.statusCode == 401) {
+      //       // Токен устарел - обновляем
+      //       final newToken = await refreshToken();
+      //       // Повторяем запрос с новым токеном
+      //       err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+      //       final response = await dio.fetch(err.requestOptions);
+      //       return handler.resolve(response);
+      //     }
+      //     super.onError(err, handler);
+      //   }
+      // }
 
 
-  // TODO dio_smart_retry
+  // TODO done dio_smart_retry
+
+
   // TODO local_notifications 
 
 
     
   @factoryMethod
   NumbersWidgetModel(
-    NumbersModel model, 
+    NumbersModel model,
     this.numberRepository,) 
       : numberController = TextEditingController(),
         factText = StateNotifier<String>(initValue: 'Здесь будет ваш факт'),
@@ -42,7 +84,6 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   void initWidgetModel() {
     super.initWidgetModel();
   }
-
 
   void showSnackBar(String message) {
     if (context.mounted) {
@@ -78,6 +119,10 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   }
 
   void onRandomFactPressed() async {
+    if (isLoading){
+      return;
+    }
+    isLoading = true;
     final fact = await numberRepository.fetchRandomTrivia();
     if (fact != null) {
       factText.accept(fact);
@@ -85,7 +130,22 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
     else {
       showSnackBar('Не удалось получить факт');
     }
+    isLoading = false;
   }
+
+  void onGetErrorPressed() async {
+    print('🔄 Тестируем Smart Retry...');
+    try {
+      final response = await numberRepository.getServerError();
+      if (response!= null) {
+        print('Ошибка 500');
+      }
+    } catch (e) {
+      print('❌ Исключение после всех попыток retry: $e');
+    }
+  }
+
+
   
 }
 
