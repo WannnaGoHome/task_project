@@ -12,15 +12,16 @@ class Task {
   final String title;
   final String description;
   bool isCompleted;
+  final DateTime deadline;
 
-  Task({required this.id, required this.title, required this.description, this.isCompleted = false});
+  Task({required this.id, required this.title, required this.description, this.isCompleted = false, required this.deadline});
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
   Map<String, dynamic> toJson() => _$TaskToJson(this);
 
 // поняла для чего нам это надо. Чтобы можно было создавать копии объекта. изменяя только некоторые свойства
   Task copyWith(
-    {String? id, String? title, String? description, bool? isCompleted}
+    {String? id, String? title, String? description, bool? isCompleted, DateTime? deadline}
     ) {
     //а здесь я создаю экземпляр класса Task, в который передаю либо поле из параметров, либо,
     //если оно null, то передаём текущее поле объекта. Это нужно чтобы не переписывать объекты класса полностью, чтобы
@@ -40,12 +41,13 @@ class Task {
       title: title ?? this.title,
       description: description ?? this.description,
       isCompleted: isCompleted ?? this.isCompleted,
+      deadline: deadline ?? this.deadline,
     );
   }
 
   @override
   String toString() {
-  return 'Task(ID Задачи: $id, Название: $title, Описание: $description, Статус: $isCompleted) хихихаха';
+  return 'Task(ID Задачи: $id, Название: $title, Описание: $description, Статус: $isCompleted) хихихаха, Дедлайн: $deadline';
 }
 
 }

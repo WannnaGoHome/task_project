@@ -47,9 +47,9 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
   void onTabChanged(int index) => currentTabIndex.accept(index);
 
   /// Добавление новой задачи
-  void onAdd(String title, String description) {
+  void onAdd(String title, String description, DateTime deadline) {
     final curTasks = List<Task>.from(tasksState.value ?? []);
-    final task = Task(id: DateTime.now().toIso8601String(), title: title, description: description);
+    final task = Task(id: DateTime.now().toIso8601String(), title: title, description: description, deadline: deadline);
     curTasks.add(task);
     tasksState.accept(curTasks);
     updateTaskSummary(curTasks);
@@ -208,8 +208,6 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     });
   }
 
-
-
 // Описание действия
 // F5 Продолжить: Возобновить нормальное выполнение программы/скрипта (до следующей точки останова).
 // Пауза: Проверить код, выполняемый в текущей строке, и отладить его построчно.
@@ -227,13 +225,30 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
 // Точка breakpoint — это маркер, который можно установить на строке кода, чтобы
 // отладчик остановил выполнение кода при достижении этой строки. Вы
 
+
+  Future<void> _selectDate(TextEditingController controller, void Function(DateTime) onPicked) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100)
+    );
+
+    if (picked != null) {
+      controller.text = "${picked.day}.${picked.month}.${picked.year}";
+      onPicked(picked);
+    }
+  }
+
   /// Показ диалога добавления новой задачи
   void showAddTaskDialog() {
-    showDialog<Map<String, String>>(
+    showDialog<Map<String, dynamic>>(
   context: context,
   builder: (context) {
     final titleController = TextEditingController();
     final descController = TextEditingController();
+    final deadlineController = TextEditingController();
+    DateTime? selectedDeadline;
 
     return AlertDialog(
       title: const Text('Добавить задачу'),
@@ -248,6 +263,20 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
             controller: descController,
             decoration: const InputDecoration(labelText: 'Описание'),
           ),
+          TextField(
+            controller: deadlineController,
+            readOnly: true,
+            decoration: const InputDecoration(
+              labelText: "Дедлайн",
+              suffixIcon: Icon(Icons.calendar_today),
+              border: OutlineInputBorder(),
+            ),
+            onTap: () {
+              _selectDate(deadlineController, (picked) {
+                  selectedDeadline = picked;
+                });
+              },      
+          )
         ],
       ),
       actions: [
@@ -259,8 +288,11 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
           onPressed: () {
             final title = titleController.text.trim();
             final desc = descController.text.trim();
+            
             if (title.isNotEmpty && desc.isNotEmpty) {
-              Navigator.pop(context, {'title': title, 'desc': desc});
+              Navigator.pop(context, {
+                'title': title, 'desc': desc, 'deadline' : selectedDeadline,
+            });
             } else {
               Navigator.pop(context);
             }
@@ -272,7 +304,7 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
   },
     ).then((result) {
       if (result != null) {
-        onAdd(result['title']!, result['desc']!);
+        onAdd(result['title']!, result['desc']!, result['deadline']);
       }
     });
 

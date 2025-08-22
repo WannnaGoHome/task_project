@@ -141,7 +141,7 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
       final fact = await numberRepository.fetchMathFact(number);
       if(fact != null) {
         factText.accept(fact);
-        showInstantNotification(id: 0, title: 'Факт', body: fact);
+        showInstantNotification(id: 0, title: 'Факт №$number', body: fact);
       }
       else {
         showSnackBar('Не удалось получить факт');

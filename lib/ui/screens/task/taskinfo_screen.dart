@@ -15,6 +15,7 @@ class TaskInfoScreen extends StatelessWidget {
     final title = task.title;
     final description = task.description;
     final status = task.isCompleted ? 'Завершён' : 'Активен';
+    
 
     String formatTaskDate(String taskId) {
       final date = DateTime.tryParse(taskId)?.toLocal();
@@ -25,6 +26,7 @@ class TaskInfoScreen extends StatelessWidget {
     }
 
     final date = formatTaskDate(task.id);
+    final deadline = formatTaskDate(task.deadline.toString());
 
     return Scaffold(
       backgroundColor: Colors.pink.shade50,
@@ -88,7 +90,7 @@ class TaskInfoScreen extends StatelessWidget {
                     const Icon(Icons.access_time, size: 18, color: Colors.orange),
                     SizedBox(width: 6.w),
                     Text(
-                      date,
+                      "$date // $deadline",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontStyle: FontStyle.italic,

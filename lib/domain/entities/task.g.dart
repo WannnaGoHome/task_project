@@ -11,6 +11,7 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
       title: json['title'] as String,
       description: json['description'] as String,
       isCompleted: json['isCompleted'] as bool? ?? false,
+      deadline: DateTime.parse(json['deadline'] as String),
     );
 
 Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
@@ -18,4 +19,5 @@ Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
       'title': instance.title,
       'description': instance.description,
       'isCompleted': instance.isCompleted,
+      'deadline': instance.deadline.toIso8601String(),
     };
