@@ -225,18 +225,26 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
 // Точка breakpoint — это маркер, который можно установить на строке кода, чтобы
 // отладчик остановил выполнение кода при достижении этой строки. Вы
 
+  bool _isPicking = false;
 
-  Future<void> _selectDate(TextEditingController controller, void Function(DateTime) onPicked) async {
-    final DateTime? picked = await showDatePicker(
+  Future<DateTime?> _selectDate(TextEditingController controller) async {
+    if (_isPicking) return null;
+    _isPicking = true;
+    
+    try {
+      final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100)
+      lastDate: DateTime(2100),
     );
 
     if (picked != null) {
       controller.text = "${picked.day}.${picked.month}.${picked.year}";
-      onPicked(picked);
+    }
+    return picked;
+  } finally {
+    _isPicking = false;
     }
   }
 
@@ -271,11 +279,12 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
               suffixIcon: Icon(Icons.calendar_today),
               border: OutlineInputBorder(),
             ),
-            onTap: () {
-              _selectDate(deadlineController, (picked) {
-                  selectedDeadline = picked;
-                });
-              },      
+            onTap: () async {
+              final picked = await _selectDate(deadlineController);
+              if (picked != null) {
+                selectedDeadline = picked;
+              }
+            } 
           )
         ],
       ),
@@ -288,6 +297,7 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
           onPressed: () {
             final title = titleController.text.trim();
             final desc = descController.text.trim();
+            
             
             if (title.isNotEmpty && desc.isNotEmpty) {
               Navigator.pop(context, {
@@ -304,7 +314,8 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
   },
     ).then((result) {
       if (result != null) {
-        onAdd(result['title']!, result['desc']!, result['deadline']);
+        final deadline = result['deadline'] ?? DateTime.now();
+        onAdd(result['title']!, result['desc']!, deadline);
       }
     });
 
