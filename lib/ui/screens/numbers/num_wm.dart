@@ -8,6 +8,9 @@ import 'package:practise/data/repositories/number_repository.dart';
 import 'num_model.dart';
 import 'num_screen.dart';
 import 'package:injectable/injectable.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart';
+import 'package:timezone/data/latest.dart';
 
 
 @injectable
@@ -16,6 +19,8 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   final TextEditingController numberController;
   final StateNotifier<String> factText;
   final NumberRepository numberRepository;
+
+  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
     //TODO done DIO Interceptor и логирование запроса и ответа
     // Interceptor (перехватчик) — это как секретарь для ваших HTTP-запросов. 
@@ -64,13 +69,8 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
       //   }
       // }
 
-
   // TODO done dio_smart_retry
-
-
   // TODO local_notifications 
-
-
     
   @factoryMethod
   NumbersWidgetModel(
@@ -83,6 +83,40 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
   @override
   void initWidgetModel() {
     super.initWidgetModel();
+    init();
+  }
+
+  Future<void> init() async {
+    initializeTimeZones();
+
+    setLocalLocation(
+      getLocation('Asia/Almaty'),
+    );
+    const androidSettings = AndroidInitializationSettings('ic_notification');
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
+    const InitializationSettings initializationSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+    await notificationsPlugin.initialize(initializationSettings);
+
+  }
+
+  Future<void> showInstantNotification({
+    required int id,
+    required String title,
+    required String body,
+  }) async {
+    await notificationsPlugin.show(id, title, body,
+    const NotificationDetails(
+      android: AndroidNotificationDetails('instant_notificaton_channe_id', "Instant Notifications",
+      channelDescription: 'Instant notification channel',
+      importance: Importance.max,
+      priority: Priority.high,
+      ),
+      iOS: DarwinNotificationDetails(),
+    ),
+    );
   }
 
   void showSnackBar(String message) {
@@ -107,6 +141,7 @@ class NumbersWidgetModel extends WidgetModel<NumbersScreen, NumbersModel>
       final fact = await numberRepository.fetchMathFact(number);
       if(fact != null) {
         factText.accept(fact);
+        showInstantNotification(id: 0, title: 'Факт', body: fact);
       }
       else {
         showSnackBar('Не удалось получить факт');
