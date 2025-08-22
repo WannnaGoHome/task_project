@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:practise/data/router/task_router.dart';
+import 'package:timezone/timezone.dart';
 import 'task_model.dart';
 import '../../../domain/entities/task.dart';
 import 'task_screen.dart';
@@ -240,7 +242,7 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     );
 
     if (picked != null) {
-      controller.text = "${picked.day}.${picked.month}.${picked.year}";
+      controller.text = "${picked.day}.0${picked.month}.${picked.year}";
     }
     return picked;
   } finally {
@@ -297,8 +299,6 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
           onPressed: () {
             final title = titleController.text.trim();
             final desc = descController.text.trim();
-            
-            
             if (title.isNotEmpty && desc.isNotEmpty) {
               Navigator.pop(context, {
                 'title': title, 'desc': desc, 'deadline' : selectedDeadline,
@@ -315,21 +315,43 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     ).then((result) {
       if (result != null) {
         final deadline = result['deadline'] ?? DateTime.now();
+        final now = DateTime.now();
+        int daysLeft = deadline.difference(now).inDays +1;
         onAdd(result['title']!, result['desc']!, deadline);
+        scheduleReminder(id: 1, title: 'Задание ${result['title']} создано!', body: 'Осталось $daysLeft дней');
       }
     });
-
   }
 
 //Переход на страницу задачи
-void showTaskInfo(String id) async {
-  final task = tasksState.value?.firstWhere((t) => t.id == id);
-  if (task == null) return;
-  await context.pushRoute(TaskInfoRoute(task: task));
+  void showTaskInfo(String id) async {
+    final task = tasksState.value?.firstWhere((t) => t.id == id);
+    if (task == null) return;
+    await context.pushRoute(TaskInfoRoute(task: task));
+  }
+  
+  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  Future<void> scheduleReminder({required int id, required String title, required String body}) async {
+    TZDateTime now = TZDateTime.now(local);
+    TZDateTime scheduledDate = now.add(const Duration(seconds: 3),);
+
+    await notificationsPlugin.zonedSchedule(
+      id, title, body, scheduledDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails('channelId', "channelName",
+        channelDescription: 'Reminder to complete the task',
+        importance: Importance.max,
+        priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    );
+  }
+
 }
 
-
-}
 TaskScreenWM createTaskScreenWM(BuildContext context) {
   final taskRepository = TaskRepository();
   return TaskScreenWM(TaskModel(TaskInteractor(TaskRepository())), taskRepository);

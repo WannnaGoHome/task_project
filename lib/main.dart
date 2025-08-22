@@ -3,6 +3,7 @@ import 'package:practise/data/router/task_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:practise/data/repositories/user_repository.dart';
 import 'package:practise/core/di/service_locator.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   final userRepository = UserRepository();
@@ -10,6 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await userRepository.initializeUsers();
   configureDependencies();
+  tz.initializeTimeZones();
   runApp(
       MyApp(),
   );

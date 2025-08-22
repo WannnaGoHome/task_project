@@ -90,7 +90,7 @@ class TaskInfoScreen extends StatelessWidget {
                     const Icon(Icons.access_time, size: 18, color: Colors.orange),
                     SizedBox(width: 6.w),
                     Text(
-                      "$date // $deadline",
+                      "$date - $deadline",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontStyle: FontStyle.italic,
