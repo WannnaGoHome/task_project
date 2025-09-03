@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +57,8 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     tasksState.accept(curTasks);
     updateTaskSummary(curTasks);
     model.saveTasks(curTasks);
-    // ignore: avoid_print
-    print('Задача добавлена: $task');
+    
+    log('Задача добавлена: $task');
   }
 
   String get tasksCount {
@@ -76,8 +77,8 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
       tasksState.accept(curTasks);
       updateTaskSummary(curTasks);
       model.saveTasks(curTasks);
-      // ignore: avoid_print
-      print('Изменён статус задачи: $task');
+      
+      log('Изменён статус задачи: $task');
     }
   }
 
@@ -141,7 +142,7 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
 //незавершенном состоянии операция уже начала выполняться, но результат еще не
 //получен. В завершенном состоянии операция завершила выполнение,результат получен:
 // Future getMessage() {
-//   return Future.delayed(Duration(seconds: 3), () => print("Пришло новое сообщение от Тома"));
+//   return Future.delayed(Duration(seconds: 3), () => log("Пришло новое сообщение от Тома"));
 // }
 //Асинхронная функция - это такая функция, которая содержит как минимум одну асинхронную операцию
 //Она выглядит как синхронная за исключением использования операторов async и await.
@@ -178,8 +179,8 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     tasksState.accept(curTasks);
     updateTaskSummary(curTasks);
     model.saveTasks(curTasks);
-    // ignore: avoid_print
-    print('Задача удалена: $task');
+    
+    log('Задача удалена: $task');
 
   }
 

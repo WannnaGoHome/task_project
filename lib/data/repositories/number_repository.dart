@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+
 
 import 'package:practise/data/api/number_api.dart';
 import 'package:injectable/injectable.dart';

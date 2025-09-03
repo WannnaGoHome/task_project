@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
@@ -57,8 +59,8 @@ class AuthorizationWidgetModel extends WidgetModel<AuthorizationScreen, Authoriz
       isBiometricAvailable.accept(available);
     }
     catch(e) {
-      // ignore: avoid_print
-      print('Biometric check error: $e');
+      
+      log('Biometric check error: $e');
       isBiometricAvailable.accept(false);
     }
   }
@@ -81,8 +83,8 @@ class AuthorizationWidgetModel extends WidgetModel<AuthorizationScreen, Authoriz
         );
       }
     } finally {
-      // ignore: avoid_print
-      print('Fingerprint authentication');
+      
+      log('Fingerprint authentication');
     }
   }
 
