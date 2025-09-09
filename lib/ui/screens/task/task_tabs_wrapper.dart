@@ -22,6 +22,12 @@ class TaskTabsWrapper extends StatelessWidget {
                   backgroundColor: Colors.pink,
                   actions: [
                     IconButton(
+                      icon: const Icon(Icons.ac_unit),
+                      onPressed: () {
+                        context.pushRoute(WebviewRoute());
+                      },
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.numbers_outlined),
                       onPressed: () {
                         context.pushRoute(const NumbersRoute());

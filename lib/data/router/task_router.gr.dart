@@ -97,6 +97,17 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const TaskTabsWrapper(),
       );
     },
+    WebviewRoute.name: (routeData) {
+      final args = routeData.argsAs<WebviewRouteArgs>(
+          orElse: () => const WebviewRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: WebviewScreen(
+          key: args.key,
+          wmFactory: args.wmFactory,
+        ),
+      );
+    },
   };
 }
 
@@ -324,4 +335,45 @@ class TaskTabsWrapperRoute extends PageRouteInfo<void> {
   static const String name = 'TaskTabsWrapperRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [WebviewScreen]
+class WebviewRoute extends PageRouteInfo<WebviewRouteArgs> {
+  WebviewRoute({
+    Key? key,
+    WidgetModel<ElementaryWidget<IWidgetModel>, ElementaryModel> Function(
+            BuildContext)
+        wmFactory = defaultWebviewWidgetModelFactory,
+    List<PageRouteInfo>? children,
+  }) : super(
+          WebviewRoute.name,
+          args: WebviewRouteArgs(
+            key: key,
+            wmFactory: wmFactory,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'WebviewRoute';
+
+  static const PageInfo<WebviewRouteArgs> page =
+      PageInfo<WebviewRouteArgs>(name);
+}
+
+class WebviewRouteArgs {
+  const WebviewRouteArgs({
+    this.key,
+    this.wmFactory = defaultWebviewWidgetModelFactory,
+  });
+
+  final Key? key;
+
+  final WidgetModel<ElementaryWidget<IWidgetModel>, ElementaryModel> Function(
+      BuildContext) wmFactory;
+
+  @override
+  String toString() {
+    return 'WebviewRouteArgs{key: $key, wmFactory: $wmFactory}';
+  }
 }

@@ -2,7 +2,8 @@ import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:practise/core/di/service_locator.dart';
+import 'package:practise/data/repositories/notification_repository.dart';
 import 'package:practise/data/router/task_router.dart';
 import 'package:timezone/timezone.dart';
 import 'task_model.dart';
@@ -18,11 +19,14 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
   final TaskRepository _repository;
   final _tasksState = StateNotifier<List<Task>>(initValue: const []);
   final _taskCounts = StateNotifier<Map<String, int>>(initValue: {'active': 0, 'completed': 0});
+  final NotificationRepository _notificationRepository;
+
   StateNotifier<Map<String, int>> get taskCounts => _taskCounts;
   StateNotifier<List<Task>> get tasksState => _tasksState;
   
   TaskScreenWM(super.model, 
-  this._repository
+  this._repository,
+  this._notificationRepository
   );
 
   @override
@@ -32,8 +36,6 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     updateTaskSummary(tasksState.value ?? []);
   });
   }
-
-
 
   void updateTaskSummary(List<Task> tasks) {
     final active = tasks.where((t) => !t.isCompleted).length;
@@ -81,7 +83,6 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
       log('Изменён статус задачи: $task');
     }
   }
-
 
 
 // поняла чем отличается List, Set и Iterable
@@ -183,7 +184,6 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     log('Задача удалена: $task');
 
   }
-
 
   void showDeleteConfirmationDialog(String id) {
     showDialog<bool>(
@@ -331,29 +331,19 @@ class TaskScreenWM extends WidgetModel<TaskScreen, TaskModel> {
     await context.pushRoute(TaskInfoRoute(task: task));
   }
   
-  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
+  
+  void scheduleReminder({required int id, required String title, required String body}) {
+    final now = TZDateTime.now(local);
+    final scheduledDate = now.add(const Duration(seconds: 3),);
 
-  Future<void> scheduleReminder({required int id, required String title, required String body}) async {
-    TZDateTime now = TZDateTime.now(local);
-    TZDateTime scheduledDate = now.add(const Duration(seconds: 3),);
-
-    await notificationsPlugin.zonedSchedule(
-      id, title, body, scheduledDate,
-      const NotificationDetails(
-        android: AndroidNotificationDetails('channelId', "channelName",
-        channelDescription: 'Reminder to complete the task',
-        importance: Importance.max,
-        priority: Priority.high,
-        ),
-        iOS: DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    _notificationRepository.scheduleNotification(
+      id: id, title: title, body: body, scheduledDate: scheduledDate,
     );
   }
-
 }
 
 TaskScreenWM createTaskScreenWM(BuildContext context) {
   final taskRepository = TaskRepository();
-  return TaskScreenWM(TaskModel(TaskInteractor(TaskRepository())), taskRepository);
+
+  return TaskScreenWM(TaskModel(TaskInteractor(TaskRepository())), taskRepository, getIt<NotificationRepository>(),);
 }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:practise/domain/entities/task.dart';
 import 'package:practise/ui/screens/change_profile/change_profile_screen.dart';
@@ -7,6 +8,8 @@ import 'package:practise/ui/screens/task/comp_tasks_detailed_navigator.dart';
 import 'package:practise/ui/screens/task/task_screen.dart';
 import 'package:practise/ui/screens/task/task_tabs_wrapper.dart';
 import 'package:practise/ui/screens/task/act_tasks_detailed_navigator.dart';
+import 'package:practise/ui/screens/webview/webview_screen.dart';
+import 'package:practise/ui/screens/webview/webview_wm.dart';
 import '../../ui/screens/profile/profile_screen.dart';
 import '../../ui/screens/task/taskinfo_screen.dart';
 import '../../ui/screens/authorization/authorization_screen.dart';
@@ -48,5 +51,6 @@ class AppRouter extends _$AppRouter {
     AutoRoute(page: ChangeProfileRoute.page, path: '/change-profile'),
     AutoRoute(page: ProfileRoute.page, path: '/profile'),
     AutoRoute(page: NumbersRoute.page, path: '/numbers'),
+    AutoRoute(page: WebviewRoute.page, path: '/webview'),
   ];
 }

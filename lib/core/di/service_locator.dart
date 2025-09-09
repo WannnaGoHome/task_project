@@ -1,8 +1,10 @@
 // lib/core/di/service_locator.dart
 import 'package:dio/dio.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:practise/core/dio/dio_setup.dart';
+import 'package:practise/data/repositories/notification_repository.dart';
 import 'service_locator.config.dart';
 
 final getIt = GetIt.instance;
@@ -15,6 +17,8 @@ final getIt = GetIt.instance;
 
 void configureDependencies() {
   getIt.registerSingleton<Dio>(DioSetup.createDio());
+  getIt.registerLazySingleton<FlutterLocalNotificationsPlugin>(() => FlutterLocalNotificationsPlugin());
+  getIt.registerLazySingleton<NotificationRepository>(() => NotificationRepository(getIt<FlutterLocalNotificationsPlugin>()));  
   init(getIt);
 } 
 

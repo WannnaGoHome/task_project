@@ -5,18 +5,21 @@ import 'package:elementary/elementary.dart';
 import 'package:elementary_helper/elementary_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:practise/data/repositories/notification_repository.dart';
 import 'package:practise/data/repositories/secure_storage_repository.dart';
 import 'package:practise/data/router/task_router.dart';
 import 'authorization_model.dart';
 import 'authorization_screen.dart';
+import 'package:practise/core/di/service_locator.dart';
  
 class AuthorizationWidgetModel extends WidgetModel<AuthorizationScreen, AuthorizationModel> {
   
   final isPinSet = StateNotifier<bool>(initValue: false);
   final pinInput = StateNotifier<String>(initValue: '');
   final isBiometricAvailable = StateNotifier<bool>(initValue: false);
-
   final auth = LocalAuthentication();
+  
+  final notificationRepository = getIt<NotificationRepository>();
   
   AuthorizationWidgetModel(AuthorizationModel model) : super(model);
 
@@ -25,6 +28,16 @@ class AuthorizationWidgetModel extends WidgetModel<AuthorizationScreen, Authoriz
     super.initWidgetModel();
     _checkPinCodeExists();
     _checkBiometricAvailability();
+    _showAppState();
+  }
+
+  Future<void> _showAppState() async {
+    //берёт значение logMessage и отображает его в снекбар
+    notificationRepository.onNotificationMessage = (message) {
+      showSnackBar(message);
+    };
+    
+    await notificationRepository.showAppState();
   }
 
   Future<void> _checkPinCodeExists() async {
