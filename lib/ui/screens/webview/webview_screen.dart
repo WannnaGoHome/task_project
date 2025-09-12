@@ -20,21 +20,44 @@ class WebviewScreen extends ElementaryWidget<WebviewWidgetModel> {
       ),
       body: Column(
         children: [
-          Expanded(child: InAppWebView(
-            initialUrlRequest: 
-            URLRequest(
-              url: WebUri("https://github.com/flutter"),
-            ),
-            onLoadStart: (controller, url) => wm.onPageStarted(url.toString()), //это начинает загружать страницу
-            onLoadStop: (controller, url) => wm.onPageFinished(url.toString()), //это загрузка заканчивается когда завершается загрузка страницы
-          )),
-          StateNotifierBuilder<bool>(
-                    listenableState: wm.isLoading,
-                    builder: (_, loading) {
-                      if (loading !=true) return const SizedBox.shrink();
-                      return const Center(child: CircularProgressIndicator());
+          Expanded(
+            child: Stack(
+              children: [
+                StateNotifierBuilder<bool>(
+                  listenableState: wm.isLoading,
+                  builder: (_, loading) {
+                    return Visibility(
+                      visible: !(loading ?? true),
+                      maintainState: true,
+                      child: InAppWebView(
+                        initialUrlRequest: URLRequest(
+                          url: WebUri("https://github.com/flutter"),
+                        ),
+                        onLoadStart: (controller, url) =>
+                            wm.onPageStarted(url.toString()),
+                        onLoadStop: (controller, url) =>
+                            wm.onPageFinished(url.toString()),
+                        initialSettings: InAppWebViewSettings(),
+                        onWebViewCreated: (controller){
+                          wm.webViewController = controller;
+                        } ,
+                      ),
+                    );
                   },
                 ),
+
+                StateNotifierBuilder<bool>(
+                  listenableState: wm.isLoading,
+                  builder: (_, loading) {
+                    if (loading == true) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

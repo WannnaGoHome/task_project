@@ -7,7 +7,7 @@ class LoggingInterceptor extends Interceptor{
     log('Запрос: ${options.method} ${options.uri}');
     log('Данные: ${options.data}');
     log('Заголовки: ${options.headers}');
-    super.onRequest(options, handler); //TODO super изучить
+    super.onRequest(options, handler); 
     //     Dio использует цепочку интерцепторов. Каждый интерцептор должен передать запрос следующему в цепочке:
 
 
